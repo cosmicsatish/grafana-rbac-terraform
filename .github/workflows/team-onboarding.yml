@@ -1,0 +1,173 @@
+name: Team Onboarding
+
+on:
+  workflow_dispatch:
+    inputs:
+      team_name:
+        description: "Team name"
+        required: true
+        type: string
+      team_email:
+        description: "Team contact email"
+        required: true
+        type: string
+      owner_folder:
+        description: "Owner folder key. If auto_create_folder is true and the folder doesn't exist, it will be created automatically."
+        required: false
+        type: string
+      auto_create_folder:
+        description: "Auto-create owner folder in folders.yaml if it doesn't already exist"
+        required: false
+        type: boolean
+        default: true
+      folder_parent_key:
+        description: "Parent folder key for auto-created folders. Must match a root folder in folders.yaml."
+        required: false
+        type: string
+        default: osttra
+      roles:
+        description: "Extra roles, comma-separated (e.g. alerting_writer, governance_reader). Leave blank for defaults."
+        required: false
+        type: string
+      lbac_selectors:
+        description: 'LBAC selectors — semicolon-separated PromQL. (e.g. { bu="u1" } ; { bu="u2" }). Leave blank for default selector.'
+        required: false
+        type: string
+      requested_folders:
+        description: "Extra folder access, comma-separated folder:Level pairs. e.g. infrastructure:View, executive:View"
+        required: false
+        type: string
+      external_group_uid:
+        description: "Azure AD / LDAP group UID for SSO sync (strongly recommended)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-team-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Auto-create owner folder
+        if: inputs.owner_folder != '' && inputs.auto_create_folder
+        run: |
+          FOLDER_KEY="${{ inputs.owner_folder }}"
+          FOLDERS_FILE="config/folders.yaml"
+
+          # Only add if the folder key doesn't already exist
+          if ! yq -e ".\"${FOLDER_KEY}\"" "$FOLDERS_FILE" > /dev/null 2>&1; then
+            printf '\n%s:\n  parent_key: %s\n  description: "%s team workspace"\n' \
+              "$FOLDER_KEY" "${{ inputs.folder_parent_key }}" "${{ inputs.team_name }}" >> "$FOLDERS_FILE"
+            echo "✓ Created folder '${FOLDER_KEY}' in ${FOLDERS_FILE}"
+          else
+            echo "→ Folder '${FOLDER_KEY}' already exists, skipping"
+          fi
+
+      - name: Generate team YAML entry
+        id: generate
+        run: |
+          TEAM_NAME="${{ inputs.team_name }}"
+          TARGET="config/teams.yaml"
+
+          # If team already exists, replace its entry.
+          if yq -e ".teams[\"$TEAM_NAME\"]" "$TARGET" > /dev/null 2>&1; then
+            yq -i "del(.teams[\"$TEAM_NAME\"])" "$TARGET"
+          fi
+
+          # Build the new configuration as a YAML snippet
+          TMP_YAML="new_snippet.yaml"
+          cat > "$TMP_YAML" << YAML
+          teams:
+            $TEAM_NAME:
+              email: "${{ inputs.team_email }}"
+          YAML
+
+          if [ -n "${{ inputs.owner_folder }}" ]; then
+            echo "    folder: ${{ inputs.owner_folder }}" >> "$TMP_YAML"
+          fi
+
+          if [ -n "${{ inputs.external_group_uid }}" ]; then
+            echo "    group_uid: ${{ inputs.external_group_uid }}" >> "$TMP_YAML"
+          fi
+
+          # Extra roles beyond auto-assigned defaults
+          if [ -n '${{ inputs.roles }}' ]; then
+            echo "    roles:" >> "$TMP_YAML"
+            echo '${{ inputs.roles }}' | tr ',' '\n' | while read role; do
+              role="$(echo "$role" | xargs)"
+              [ -n "$role" ] && echo "      - $role" >> "$TMP_YAML"
+            done
+          fi
+
+          # LBAC selectors (leave blank to use defaults)
+          if [ -n '${{ inputs.lbac_selectors }}' ]; then
+            echo "    lbac:" >> "$TMP_YAML"
+            echo '${{ inputs.lbac_selectors }}' | tr ';' '\n' | while read selector; do
+              selector="$(echo "$selector" | xargs)"
+              [ -n "$selector" ] && echo "      - '$selector'" >> "$TMP_YAML"
+            done
+          fi
+
+          # Extra folder permissions beyond defaults
+          if [ -n '${{ inputs.requested_folders }}' ]; then
+            echo "    folder_permissions:" >> "$TMP_YAML"
+            echo '${{ inputs.requested_folders }}' | tr ',' '\n' | while read perm; do
+              if [[ "$perm" == *":"* ]]; then
+                folder=$(echo "$perm" | cut -d: -f1 | xargs)
+                level=$(echo "$perm" | cut -d: -f2 | xargs)
+                [ -n "$folder" ] && [ -n "$level" ] && echo "      $folder: $level" >> "$TMP_YAML"
+              fi
+            done
+          fi
+
+          # Merge snippet into the target file and remove temp file
+          yq eval-all -i 'select(fileIndex == 0) * select(fileIndex == 1)' "$TARGET" "$TMP_YAML"
+          rm "$TMP_YAML"
+
+      - name: Validate YAML
+        run: yq e '.' config/teams.yaml > /dev/null
+
+      - name: Build branch name
+        id: slug
+        run: |
+          slug="$(echo "${{ inputs.team_name }}" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//; s/-$//')"
+          echo "branch=onboard-${slug}" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v5.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.slug.outputs.branch }}
+          delete-branch: true
+          commit-message: "feat: onboard team ${{ inputs.team_name }}"
+          title: "feat: onboard team ${{ inputs.team_name }}"
+          body: |
+            ## Team Onboarding Request
+
+            | Field | Value |
+            |-------|-------|
+            | Team | `${{ inputs.team_name }}` |
+            | Email | `${{ inputs.team_email }}` |
+            | Owner Folder | `${{ inputs.owner_folder || 'None' }}` |
+            | AD Group UID | `${{ inputs.external_group_uid || 'None' }}` |
+
+            ### Access Configuration
+
+            | Setting | Value |
+            |---------|-------|
+            | Extra Roles | `${{ inputs.roles || '(defaults only)' }}` |
+            | LBAC Selectors | `${{ inputs.lbac_selectors || '(default selector)' }}` |
+            | Extra Folders | `${{ inputs.requested_folders || '(defaults only)' }}` |
+
+             ### Auto-assigned Defaults (Configured in config/)
+
+             - **Roles**: Global default roles (`default: true` in `roles.yaml`) + folder owner roles (`auto_assign_to_folder_owner: true` in `roles.yaml` if owner folder is set)
+             - **Folder Permissions**: Default folder permissions (`default_permissions` in `folders.yaml`) + owner folder permission (`defaults.owner_folder_permission` in `teams.yaml` if folder is set)
+             - **Datasource**: Default datasources (`defaults.datasources` in `teams.yaml`)
+             - **LBAC**: Default LBAC selectors (`defaults.lbac_selectors` in `teams.yaml` if no custom selector is provided)
+
+            ${{ inputs.external_group_uid == '' && '> ⚠️ **No AD group UID provided.** SSO sync will not be configured for this team. Consider adding a `group_uid` before merging.' || '' }}

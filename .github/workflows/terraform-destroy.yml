@@ -1,0 +1,57 @@
+name: Terraform Destroy (Grafana)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: "Type DESTROY to confirm"
+        required: true
+        type: choice
+        options:
+          - DESTROY
+
+concurrency:
+  group: grafana-terraform-state
+  cancel-in-progress: false
+
+jobs:
+  destroy:
+    if: github.event.inputs.confirm_destroy == 'DESTROY'
+    runs-on: ubuntu-latest
+    environment: grafana-prod
+
+    permissions:
+      contents: write
+
+    env:
+      TF_IN_AUTOMATION: true
+      TF_VAR_grafana_url: ${{ secrets.GRAFANA_URL }}
+      TF_VAR_grafana_token: ${{ secrets.GRAFANA_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Restore Terraform State
+        uses: ./.github/actions/tf-state
+        with:
+          mode: restore
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269571ab # v3.1.2
+        with:
+          terraform_version: 1.15.4
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Destroy
+        working-directory: terraform
+        run: terraform destroy -auto-approve -no-color
+
+      - name: Persist Terraform State
+        if: always()
+        uses: ./.github/actions/tf-state
+        with:
+          mode: persist
+          run_id: "destroy [run=${{ github.run_id }}]"

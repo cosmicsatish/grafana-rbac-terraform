@@ -1,0 +1,112 @@
+osttra:
+  description: OSTTRA organisational root
+
+markitserv:
+  parent_key: osttra
+  description: markitserv team workspace
+
+# application-support:
+#   parent_key: osttra
+#   description: Application support team workspace
+
+# availability:
+#   parent_key: osttra
+#   description: SLO / SLA views
+
+# cloud:
+#   parent_key: osttra
+#   description: AWS / Azure / GCP
+
+# cybersec:
+#   parent_key: osttra
+#   description: CyberSec team workspace
+
+# dashboards:
+#   parent_key: osttra
+#   description: Global dashboards and standard alert packs
+
+# databases:
+#   parent_key: osttra
+#   description: Database platforms
+
+# euc:
+#   parent_key: osttra
+#   description: EUC products
+
+# executive:
+#   parent_key: osttra
+#   description: Leadership KPIs
+
+# infrastructure:
+#   parent_key: osttra
+#   description: All technical foundations
+
+# jigsaw-monitoring:
+#   parent_key: osttra
+#   description: Jigsaw monitoring application
+
+# network-team:
+#   parent_key: osttra
+#   description: Network team workspace
+
+# operation-automation:
+#   parent_key: osttra
+#   description: Operation automation platform
+
+# pengraven:
+#   parent_key: osttra
+#   description: PengRaven products
+
+# platform:
+#   parent_key: osttra
+#   description: Org-level governance & cross-cutting concerns
+
+# products:
+#   parent_key: osttra
+#   description: Business products
+
+# reliability:
+#   parent_key: osttra
+#   description: Platform-wide reliability KPIs
+
+# security:
+#   parent_key: osttra
+#   description: Security posture, compliance monitoring, and threat detection
+
+# shared:
+#   parent_key: osttra
+#   description: Reusable, non-owned dashboards
+#   default_permissions:
+#     all_teams: View
+
+# sre:
+#   parent_key: osttra
+#   description: SRE team workspace
+
+# systems:
+#   parent_key: osttra
+#   description: OS, VMs, bare metal
+
+# toc:
+#   parent_key: osttra
+#   description: TOC team workspace
+
+# traiana:
+#   parent_key: osttra
+#   description: Traiana products
+
+# triauth-settle-vent:
+#   parent_key: osttra
+#   description: TriAuth, TriSettle, TriVent products
+
+# tribalance:
+#   parent_key: osttra
+#   description: TriBalance service
+
+# trioptima:
+#   parent_key: osttra
+#   description: TriOptima product suite
+
+# triresolve:
+#   parent_key: osttra
+#   description: TriResolve services

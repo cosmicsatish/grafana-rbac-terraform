@@ -1,0 +1,79 @@
+name: Terraform Plan (Grafana)
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "terraform/**"
+      - "modules/**"
+      - "config/**"
+      - ".github/workflows/terraform-plan.yml"
+      - ".github/actions/**"
+
+concurrency:
+  group: grafana-terraform-state
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate YAML syntax
+        run: |
+          python3 - <<'EOF'
+          import yaml, sys, glob
+          errors = []
+          for f in glob.glob('config/*.yaml'):
+            try:
+              yaml.safe_load(open(f))
+              print(f'✓ {f}')
+            except Exception as e:
+              errors.append(f'{f}: {e}')
+              print(f'✗ {f}: {e}')
+          if errors:
+            sys.exit(1)
+          EOF
+
+  plan:
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: true
+      TF_VAR_grafana_url: ${{ secrets.GRAFANA_URL }}
+      TF_VAR_grafana_token: ${{ secrets.GRAFANA_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Restore Terraform State
+        uses: ./.github/actions/tf-state
+        with:
+          mode: restore
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269571ab # v3.1.2
+        with:
+          terraform_version: 1.15.4
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: terraform
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+
+      # import blocks in grafana_discovery.tf reconcile state automatically.
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -no-color

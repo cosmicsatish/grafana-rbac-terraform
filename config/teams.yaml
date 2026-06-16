@@ -1,0 +1,339 @@
+defaults:
+  owner_folder_permission: Admin
+  datasources:
+    - grafanacloud-osttra-logs-lbac
+  lbac_selectors:
+    - '{ business_unit!~"reset|trioptima|osttra" }'
+
+teams:
+  MarkitServ:
+    roles:
+     - adaptive_editor
+    folder_permissions:
+      markitserv: Admin
+    datasources: 
+      - loki-lbac
+    lbac_selectors:
+      - '{ Organization="MarkitServ" }'
+      - '{ business_unit="markitserv" }'
+
+#   Admins:
+#     group_uid: 343133ba-f28b-4fab-95a0-55fc56391429
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - alerting_admin
+#     - dashboard_folder_writer
+#     - governance_reader
+#     - grafana_admin_full
+#     - plugin_operator
+#     folder_permissions:
+#       platform: Admin
+#       infrastructure: Admin
+#       products: Admin
+#       shared: Admin
+
+#   AI-ML Users:
+#     roles:
+#     - ai_ml_viewer
+#     datasources: []
+
+#   All viewers:
+#     group_uid: f15fd8d4-c098-4bfa-bce4-a606e75cf032
+#     folder_permissions:
+#       dashboards: View
+#       executive: View
+#       availability: View
+
+#   Application Support:
+#     folder: application-support
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       products: View
+
+#   Create Reports:
+#     group_uid: ed72c4d2-7df2-4b2a-b1af-54d75f075cf0
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - reports_author
+#     folder_permissions:
+#       executive: View
+
+#   Cyber Security Team:
+#     email: secops@osttra.com
+#     folder: cybersec
+#     group_uid: 94ab4e0e-8d9b-48a4-9acf-d20af85ed474
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - governance_reader
+#     folder_permissions:
+#       security: Admin
+
+#   Dashboarding and Alerting:
+#     folder: dashboards
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       shared: Admin
+#       infrastructure: Edit
+#       products: View
+
+#   Database Admins:
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       databases: Admin
+#       infrastructure: View
+
+#   database readonly:
+#     group_uid: e351787b-62a1-4f00-8179-c551ce4397cc
+#     folder_permissions:
+#       infrastructure: View
+#       databases: View
+
+#   Editors:
+#     group_uid: 0bc3c864-ca62-45bd-963d-6f76dc56c881
+#     roles:
+#     - dashboard_folder_writer
+#     folder_permissions:
+#       shared: Edit
+#       dashboards: Edit
+
+#   euc:
+#     folder: euc
+#     group_uid: 4cdee61f-3804-44bc-9865-3d4b45be8c48
+#     lbac:
+#     - '{ service_name="euc", business_unit="osttra" }'
+#     folder_permissions:
+#       products: View
+
+#   GrafanaAdmin:
+#     roles:
+#     - alerting_admin
+#     folder_permissions:
+#       platform: Admin
+#       infrastructure: Admin
+#       products: Admin
+#       shared: Admin
+#     datasources: []
+
+#   InfoSec:
+#     email: infosec-department@osttra.com
+#     folder_permissions:
+#       security: View
+
+#   jigsaw-monitoring:
+#     folder: jigsaw-monitoring
+#     group_uid: e30a074a-6db5-43cf-9b5c-cb665dadaffb
+#     folder_permissions:
+#       trioptima: View
+#       products: View
+
+#   Network:
+#     email: network@osttra.com
+#     folder: network-team
+#     group_uid: eeb6e377-3963-4c62-b05a-1ff3fea563e9
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - plugin_operator
+#     folder_permissions:
+#       infrastructure: View
+
+#   NFT Team:
+#     email: DL-OSTTRA-QA-NFT@osttra.com
+#     folder_permissions:
+#       products: View
+
+#   operation-automation:
+#     folder: operation-automation
+#     group_uid: a6f71e5b-f0e3-47a8-90a8-f3c6d514ee7a
+#     lbac:
+#     - '{ business_unit="trioptima", service_name="operation-automation" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       trioptima: Edit
+#       products: View
+
+#   optapi:
+#     folder: trioptima
+#     group_uid: 0d803051-8320-4aae-935f-286db952d40f
+#     lbac:
+#     - '{ business_unit="trioptima", service_name="optapi" }'
+#     folder_permissions:
+#       products: View
+
+#   pengRaven:
+#     folder: pengraven
+#     group_uid: f597b837-d4b2-4d13-b852-ddf076a7acca
+#     lbac:
+#     - '{ business_unit="trioptima", k8s_cluster_name=~"atlassian-(prod|test)", namespace="codereview" }'
+#     folder_permissions:
+#       products: View
+
+#   Private Cloud:
+#     folder: cloud
+#     group_uid: c8602e43-5647-4074-8116-ff77c8847e7c
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       infrastructure: View
+
+#   Product Management:
+#     roles:
+#     - alerting_writer
+#     - dashboard_folder_writer
+#     folder_permissions:
+#       shared: Edit
+#       executive: Edit
+#       products: View
+
+#   Reset:
+#     folder: triauth-settle-vent
+#     group_uid: 3ce124dc-a1a7-4f2a-bbec-72a8930c640a
+#     lbac:
+#     - '{ business_unit="reset" }'
+#     - '{ service_name="network_nginx", business_unit="osttra", instance=~".*-rst-.*" }'
+#     folder_permissions:
+#       products: View
+
+#   SRE:
+#     folder: sre
+#     roles:
+#     - alerting_admin
+#     - plugin_operator
+#     folder_permissions:
+#       infrastructure: Admin
+#       reliability: Admin
+#       shared: Edit
+
+#   sys admins linux:
+#     folder: systems
+#     group_uid: f96710f3-3fdf-43b9-8793-77bf27799629
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       infrastructure: View
+
+#   sys admins storage:
+#     folder: databases
+#     group_uid: 4c959fff-4a29-4696-b5f0-f7df6944b3d6
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       infrastructure: View
+
+#   sys admins windows:
+#     folder: systems
+#     group_uid: b1de102c-998e-43f8-86f9-4ce898520e97
+#     lbac:
+#     - '{ business_unit!="null" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       infrastructure: View
+
+#   TOC:
+#     email: traiana-noc@osttra.com
+#     folder: toc
+#     group_uid: f59f801f-12be-48f8-8789-b9b788cb6dd5
+#     roles:
+#     - alerting_admin
+#     - plugin_operator
+#     folder_permissions:
+#       infrastructure: Admin
+#       shared: Edit
+#       availability: Admin
+#       reliability: Admin
+
+#   Traiana CSM:
+#     folder: traiana
+#     folder_permissions:
+#       products: View
+
+#   traiana-connectivity-dev:
+#     folder: traiana
+#     group_uid: acbf1722-2612-45ae-a15c-7333142bd2ec
+#     folder_permissions:
+#       products: View
+
+#   traiana-credit-dev:
+#     folder: traiana
+#     group_uid: a4c4b7e8-fe2a-4de0-b71d-88b3d1777ed5
+#     folder_permissions:
+#       products: View
+
+#   traiana-fx-dev:
+#     folder: traiana
+#     group_uid: f76042d3-36c9-4034-af6b-78a52e4bdeec
+#     folder_permissions:
+#       products: View
+
+#   triBalance:
+#     folder: tribalance
+#     group_uid: 35033666-a015-43ad-a827-1ef80bab8875
+#     lbac:
+#     - '{ business_unit="trioptima", product_name=~"trireduce-(rates|credit|fx)|tribalance|optimization" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       trioptima: Admin
+#       products: View
+
+#   triCalculate:
+#     folder: trioptima
+#     group_uid: 30d8f40d-2ae2-4d88-8287-af23cec4e0d1
+#     lbac:
+#     - '{ business_unit="trioptima", service_name="tricalculate" }'
+#     folder_permissions:
+#       products: View
+
+#   triQA:
+#     folder: trioptima
+#     group_uid: aa00b61f-bd87-49b3-854f-140e8ac322de
+#     lbac:
+#     - '{ cluster="qa-ci-2" }'
+#     folder_permissions:
+#       products: View
+
+#   triReduce:
+#     folder: trioptima
+#     group_uid: 23f7f303-5d3c-4bf0-bd36-c5d02173a906
+#     lbac:
+#     - '{ business_unit="trioptima", product_name=~"trireduce-(rates|credit|fx)|tribalance|optimization" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       products: View
+
+#   triResolve-core:
+#     folder: triresolve
+#     group_uid: e7cd8d85-7ee2-4842-a686-eacbc8fd4d6f
+#     lbac:
+#     - '{ business_unit="trioptima", service_name="triresolve-core" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       trioptima: Admin
+#       products: View
+
+#   triResolve-margin:
+#     folder: triresolve
+#     group_uid: b4c06297-6c80-4f18-aeef-e8a630e21cd3
+#     lbac:
+#     - '{ business_unit="trioptima", service_name="triresolve-margin" }'
+#     roles:
+#     - alerting_writer
+#     folder_permissions:
+#       trioptima: Admin
+#       products: View

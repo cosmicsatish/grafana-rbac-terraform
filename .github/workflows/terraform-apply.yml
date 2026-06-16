@@ -1,0 +1,62 @@
+name: Terraform Apply (Grafana)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_apply:
+        description: "Type APPLY to confirm"
+        required: true
+        type: choice
+        options:
+          - APPLY
+
+concurrency:
+  group: grafana-terraform-state
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.event.inputs.confirm_apply == 'APPLY'
+    runs-on: ubuntu-latest
+    environment: grafana-prod
+
+    permissions:
+      contents: write   # needed to push updated state to terraform-state branch
+
+    env:
+      TF_IN_AUTOMATION: true
+      TF_VAR_grafana_url: ${{ secrets.GRAFANA_URL }}
+      TF_VAR_grafana_token: ${{ secrets.GRAFANA_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Restore Terraform State
+        uses: ./.github/actions/tf-state
+        with:
+          mode: restore
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269571ab # v3.1.2
+        with:
+          terraform_version: 1.15.4
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      # import blocks in grafana_discovery.tf reconcile state automatically.
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -no-color -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -no-color tfplan
+
+      - name: Persist Terraform State
+        if: always()
+        uses: ./.github/actions/tf-state
+        with:
+          mode: persist
+          run_id: "apply [run=${{ github.run_id }}]"

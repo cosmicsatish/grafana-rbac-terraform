@@ -1,0 +1,51 @@
+name: Terraform State
+description: >
+  Restore or persist terraform.tfstate from/to the `terraform-state` orphan
+  branch. Keeps state git-native without an external backend.
+
+inputs:
+  mode:
+    description: "'restore' to pull state before a run, 'persist' to push it after"
+    required: true
+  run_id:
+    description: "GitHub run ID — included in the persist commit message"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Terraform State
+      if: inputs.mode == 'restore'
+      shell: bash
+      run: |
+        git fetch origin terraform-state 2>/dev/null || true
+        if git ls-remote --exit-code origin terraform-state > /dev/null 2>&1; then
+          git checkout origin/terraform-state -- terraform/terraform.tfstate 2>/dev/null || true
+          echo "State restored."
+        else
+          echo "No terraform-state branch yet — first apply will create it."
+        fi
+
+    - name: Persist Terraform State
+      if: inputs.mode == 'persist'
+      shell: bash
+      run: |
+        cp terraform/terraform.tfstate /tmp/terraform.tfstate 2>/dev/null || exit 0
+
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git config user.name  "github-actions[bot]"
+
+        if git ls-remote --exit-code origin terraform-state > /dev/null 2>&1; then
+          git fetch origin terraform-state
+          git checkout -B terraform-state FETCH_HEAD
+        else
+          git checkout --orphan terraform-state
+          git rm -rf . --quiet 2>/dev/null || true
+        fi
+
+        mkdir -p terraform
+        cp /tmp/terraform.tfstate terraform/terraform.tfstate
+        git add terraform/terraform.tfstate
+        git commit -m "state: ${{ inputs.run_id }}" || true
+        git push origin terraform-state

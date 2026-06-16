@@ -1,0 +1,148 @@
+adaptive_editor:
+  description: Access and manage Adaptive Metrics/Logs for the team only.
+  permissions:
+    # General Plugin Access
+    plugins:grafana-adaptivelogs-app:plugin-access: ''
+    plugins:grafana-adaptive-metrics-app:plugin-access: ''
+    
+    # Adaptive Metrics (Restricted to Segment)
+    plugins:grafana-adaptive-metrics-app:rules-editor: 'segments:*'
+    plugins:grafana-adaptive-metrics-app:exemptions-editor: 'segments:*'
+    plugins:grafana-adaptive-metrics-app:segments-reader: 'segments:*'
+    
+    # Adaptive Logs (Restricted to Segment)
+    plugins:grafana-adaptivelogs-app:patterns-editor: 'segments:*'
+    
+    # Standard Viewer permissions
+    fixed:datasources:explorer: ''
+    fixed:dashboards:reader: ''
+    fixed:folders:reader: ''
+
+
+# ai_ml_viewer:
+#   description: Grafana AI/ML and Sift investigation access
+
+#   permissions:
+#     plugins:grafana-ml-app:ml-viewer: ''
+#     plugins:grafana-ml-app:sift-viewer: ''
+#     fixed:datasources:explorer: ''
+#     fixed:dashboards:reader: ''
+#     fixed:folders:reader: ''
+
+# alerting_admin:
+#   description: Alerting administration persona
+#   permissions:
+#     fixed:alerting:writer: ''
+#     fixed:alerting.provisioning:writer: ''
+#     fixed:alerting.rules:reader: ''
+#     fixed:alerting.rules:writer: ''
+#     fixed:alerting.instances:reader: ''
+#     fixed:alerting.instances:writer: ''
+#     fixed:alerting.notifications:reader: ''
+#     fixed:alerting.notifications:writer: ''
+#     fixed:receivers.permissions:reader: ''
+#     fixed:receivers.permissions:writer: ''
+#     fixed:alerting.receivers:reader: ''
+#     fixed:alerting.receivers:creator: ''
+#     fixed:alerting.receivers:writer: ''
+#     fixed:alerting.templates:reader: ''
+#     fixed:alerting.templates:writer: ''
+#     fixed:alerting.routes:reader: ''
+#     fixed:alerting.routes:writer: ''
+
+# alerting_writer:
+#   description: Alerting and folder writer persona
+#   permissions:
+#     fixed:alerting:reader: ''
+#     fixed:alerting:writer: ''
+#     fixed:datasources:explorer: ''
+#     fixed:dashboards:reader: ''
+#     fixed:folders:reader: ''
+#     fixed:folders:creator: ''
+#     fixed:folders:writer: ''
+
+# dashboard_folder_writer:
+#   description: Dashboard and folder authoring
+#   auto_assign_to_folder_owner: true
+#   permissions:
+#     fixed:datasources:explorer: ''
+#     fixed:datasources:reader: ''
+#     fixed:dashboards:reader: ''
+#     fixed:dashboards:creator: ''
+#     fixed:dashboards:writer: ''
+#     fixed:folders:reader: ''
+#     fixed:folders:creator: ''
+#     fixed:folders:writer: ''
+#     fixed:library.panels:reader: ''
+#     fixed:library.panels:creator: ''
+#     fixed:library.panels:writer: ''
+
+# governance_reader:
+#   description: RBAC, users, teams, and service-account governance visibility
+#   permissions:
+#     fixed:roles:reader: ''
+#     fixed:org.users:reader: ''
+#     fixed:teams:read: ''
+#     fixed:teams.permissions:reader: ''
+#     fixed:serviceaccounts:reader: ''
+#     fixed:serviceaccounts.permissions:reader: ''
+
+# grafana_admin_full:
+#   description: Full Grafana administration (assign sparingly)
+#   permissions:
+#     fixed:roles:reader: ''
+#     fixed:org.users:reader: ''
+#     fixed:teams:read: ''
+#     fixed:teams.permissions:reader: ''
+#     fixed:serviceaccounts:reader: ''
+#     fixed:serviceaccounts.permissions:reader: ''
+#     fixed:datasources:explorer: ''
+#     fixed:datasources:reader: ''
+#     fixed:dashboards:creator: ''
+#     fixed:dashboards:reader: ''
+#     fixed:dashboards:writer: ''
+#     fixed:folders:creator: ''
+#     fixed:folders:reader: ''
+#     fixed:folders:writer: ''
+#     fixed:alerting:writer: ''
+#     fixed:alerting.provisioning:writer: ''
+#     fixed:plugins.app:reader: ''
+#     fixed:reports:reader: ''
+#     fixed:secret.securevalues:creator: ''
+#     fixed:secret.securevalues:reader: ''
+#     datasources:create: ''
+#     datasources:write: datasources:*
+
+# plugin_operator:
+#   description: Synthetic monitoring, incident, and k6 plugin operator
+#   permissions:
+#     fixed:plugins.app:reader: ''
+#     fixed:datasources:explorer: ''
+#     fixed:library.panels:reader: ''
+#     plugins:grafana-irm-app:incident-access: ''
+#     plugins:k6-app:reader: ''
+#     plugins:grafana-synthetic-monitoring-app:reader: ''
+#     plugins:grafana-synthetic-monitoring-app:editor: ''
+#     plugins:grafana-synthetic-monitoring-app:checks-reader: ''
+#     plugins:grafana-synthetic-monitoring-app:checks-writer: ''
+#     plugins:grafana-synthetic-monitoring-app:probes-reader: ''
+#     plugins:grafana-synthetic-monitoring-app:probes-writer: ''
+
+# reports_author:
+#   description: Create and manage scheduled PDF reports
+#   permissions:
+#     fixed:reports:reader: ''
+#     fixed:reports:writer: ''
+#     fixed:dashboards:reader: ''
+#     fixed:folders:reader: ''
+
+# viewer_readonly:
+#   description: Read-only dashboards and datasource exploration
+#   default: true
+#   permissions:
+#     fixed:datasources:explorer: ''
+#     fixed:datasources:reader: ''
+#     fixed:dashboards:reader: ''
+#     fixed:folders:reader: ''
+#     fixed:library.panels:reader: ''
+#     fixed:reports:reader: ''
