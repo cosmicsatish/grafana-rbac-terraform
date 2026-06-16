@@ -110,3 +110,7 @@ markitserv:
 # triresolve:
 #   parent_key: osttra
 #   description: TriResolve services
+
+MarkitServTest:
+  parent_key: osttra
+  description: "MarkitServ-Test team workspace"
