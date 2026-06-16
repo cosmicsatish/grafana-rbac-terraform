@@ -290,6 +290,14 @@ teams:
 
 ### Option 1: GitHub Actions UI (recommended)
 
+> [!IMPORTANT]
+> **Repository Permissions**: To allow the onboarding workflow to create pull requests, you must enable the permission in your repository settings:
+> 1. Go to **Settings** → **Actions** → **General**.
+> 2. Scroll down to the **Workflow permissions** section.
+> 3. Check the box for **"Allow GitHub Actions to create and approve pull requests"**.
+> 4. Click **Save**.
+
+
 1. Go to **Actions → Team Onboarding → Run workflow**
 2. Fill in the form:
    - Team name, email
@@ -432,9 +440,9 @@ All tool and dependency versions are pinned to exact values to prevent unexpecte
 | Terraform | `1.15.4` | `providers.tf`, all workflows |
 | `grafana/grafana` provider | `4.23.0` | `providers.tf`, `.terraform.lock.hcl` |
 | `hashicorp/http` provider | `3.5.0` | `providers.tf`, `.terraform.lock.hcl` |
-| `actions/checkout` | `v4.2.2` (SHA pinned) | All workflows |
+| `actions/checkout` | `v5` (Major tag) | All workflows |
 | `hashicorp/setup-terraform` | `v3.1.2` (SHA pinned) | Plan, Apply, Destroy workflows |
-| `peter-evans/create-pull-request` | `v5.0.2` (SHA pinned) | Onboarding workflow |
+| `peter-evans/create-pull-request` | `v7` (Major tag) | Onboarding workflow |
 
 **To upgrade**: Update the version in `providers.tf`, run `terraform init -upgrade` to regenerate `.terraform.lock.hcl`, then update the `terraform_version` in all workflow files.
 
