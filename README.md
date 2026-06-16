@@ -441,8 +441,8 @@ All tool and dependency versions are pinned to exact values to prevent unexpecte
 | `grafana/grafana` provider | `4.23.0` | `providers.tf`, `.terraform.lock.hcl` |
 | `hashicorp/http` provider | `3.5.0` | `providers.tf`, `.terraform.lock.hcl` |
 | `actions/checkout` | `v5` (Major tag) | All workflows |
-| `hashicorp/setup-terraform` | `v3.1.2` (SHA pinned) | Plan, Apply, Destroy workflows |
-| `peter-evans/create-pull-request` | `v7` (Major tag) | Onboarding workflow |
+| `hashicorp/setup-terraform` | `v3` (Major tag) | Plan, Apply, Destroy workflows |
+| `peter-evans/create-pull-request` | `v7` (Major tag) | Onboarding & Resource workflows |
 
 **To upgrade**: Update the version in `providers.tf`, run `terraform init -upgrade` to regenerate `.terraform.lock.hcl`, then update the `terraform_version` in all workflow files.
 
