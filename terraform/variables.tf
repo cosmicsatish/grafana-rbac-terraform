@@ -55,3 +55,21 @@ variable "prevent_destroy_if_not_empty" {
   type        = bool
   default     = true
 }
+
+variable "default_datasources" {
+  description = "Default datasources to assign to teams if not overridden in teams.yaml. Fallback when not specified in YAML defaults."
+  type        = list(string)
+  default     = ["loki-lbac"]
+}
+
+variable "default_lbac_selectors" {
+  description = "Default LBAC selectors to assign to teams if not overridden in teams.yaml. Fallback when not specified in YAML defaults."
+  type        = list(string)
+  default     = ["{ business_unit!~\"reset|trioptima|osttra\" }"]
+}
+
+variable "default_owner_folder_permission" {
+  description = "Default owner folder permission to assign to teams if not overridden in teams.yaml. Fallback when not specified in YAML defaults."
+  type        = string
+  default     = "Admin"
+}
