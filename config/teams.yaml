@@ -1,15 +1,29 @@
+defaults:
+  owner_folder_permission: Admin
+  datasources:
+    - grafanacloud-osttra-logs-lbac
+  lbac_selectors:
+    - '{ business_unit!~"reset|trioptima|osttra" }'
 teams:
   MarkitServ:
     roles:
-     - adaptive_editor
+      - adaptive_editor
     folder_permissions:
       markitserv: Admin
-    datasources: 
+    datasources:
       - loki-lbac
     lbac_selectors:
       - '{ Organization="MarkitServ" }'
       - '{ business_unit="markitserv" }'
-
+  MarkitServ-Test:
+    email: "test@example.com"
+    roles:
+      - adaptive_editor
+    lbac:
+      - '{ Organization=MarkitServ }'
+      - '{ business_unit=markitserv }'
+    folder_permissions:
+      markitserv: View
 #   Admins:
 #     group_uid: 343133ba-f28b-4fab-95a0-55fc56391429
 #     lbac:
