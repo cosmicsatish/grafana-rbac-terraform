@@ -492,6 +492,9 @@ terraform apply
 | `roles` | `map(object)` | `{}` | Fallback role definitions (normally loaded from `config/roles.yaml`) |
 | `teams` | `map(object)` | `{}` | Fallback team config (normally loaded from `config/teams.yaml`) |
 | `folders` | `map(object)` | `{}` | Fallback folder config (normally loaded from `config/folders.yaml`) |
+| `default_datasources` | `list(string)` | `["loki-lbac"]` | Default datasources fallback when not specified in YAML defaults |
+| `default_lbac_selectors` | `list(string)` | `["{ business_unit!~\"reset...\" }"]` | Default LBAC selectors fallback when not specified in YAML defaults |
+| `default_owner_folder_permission` | `string` | `"Admin"` | Default owner folder permission fallback when not specified in YAML defaults |
 
 ---
 

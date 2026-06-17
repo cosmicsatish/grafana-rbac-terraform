@@ -30,10 +30,10 @@ locals {
     if try(folder_config.default_permissions.all_teams, null) != null
   }
 
-  # Extract global defaults from catalog config
-  default_owner_folder_permission = try(local.raw_catalog.defaults.owner_folder_permission, "Admin")
-  default_datasources             = try(local.raw_catalog.defaults.datasources, ["loki-lbac"])
-  default_lbac_selectors          = try(local.raw_catalog.defaults.lbac_selectors, ["{ business_unit!~\"reset|trioptima|osttra\" }"])
+  # Extract global defaults from variables directly
+  default_owner_folder_permission = var.default_owner_folder_permission
+  default_datasources             = var.default_datasources
+  default_lbac_selectors          = var.default_lbac_selectors
 
   # Expand and normalize catalog entries.
   expanded_catalog_teams = {
